@@ -1,0 +1,5 @@
+/target
+/node
+/src/main/resources/all.js
+/src/main/resources/all.js.map
+/frontend/node_modules
