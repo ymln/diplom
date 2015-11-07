@@ -1,5 +1,10 @@
 /target
 /node
-/src/main/resources/all.js
-/src/main/resources/all.js.map
+/frontend/static/all.js
+/frontend/static/all.js.map
+/frontend/static/*.eot
+/frontend/static/*.svg
+/frontend/static/*.ttf
+/frontend/static/*.woff
+/frontend/static/*.woff2
 /frontend/node_modules

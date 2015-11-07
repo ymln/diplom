@@ -29,18 +29,16 @@ public class Main {
 
         Injector injector = Guice.createInjector(new Module());
 
-        createTablesInDb(injector.getInstance(ConnectionSource.class));
+        createTables(injector.getInstance(ConnectionSource.class));
 
         startServer(port);
-
-        startWebpackWatch();
     }
 
     private static void startServer(int port) throws Exception {
         Server server = new Server(port);
 
         ResourceHandler staticFilesHandler = new ResourceHandler();
-        staticFilesHandler.setBaseResource(Resource.newClassPathResource("."));
+        staticFilesHandler.setBaseResource(Resource.newResource("frontend/static"));
         ContextHandler staticFilesContext = new ContextHandler();
         staticFilesContext.setHandler(staticFilesHandler);
 
@@ -54,12 +52,8 @@ public class Main {
         server.start();
     }
 
-    private static void createTablesInDb(ConnectionSource conn) throws SQLException {
+    private static void createTables(ConnectionSource conn) throws SQLException {
         TableUtils.createTable(conn, diplom.entities.User.class);
-    }
-
-    private static void startWebpackWatch() {
-
     }
 
     private static class Module extends ServletModule {
