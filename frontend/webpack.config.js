@@ -46,5 +46,5 @@ module.exports = {
             }
         })
     ],
-    devtool: DEV ? 'cheap-module-eval-source-map' : false
+    devtool: DEV ? '#cheap-module-eval-source-map' : false
 }

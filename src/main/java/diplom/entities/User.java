@@ -1,41 +1,29 @@
 package diplom.entities;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import com.avaje.ebean.Model;
 
-@DatabaseTable
-public class User {
-    @DatabaseField(id = true)
-    private int id;
-    @DatabaseField(canBeNull = false)
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class User extends Model {
+    @Id
+    private long id;
+    @Column
     private String email;
-    @DatabaseField(canBeNull = false)
+    @Column
     private String passwordHash;
 
     public User() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+    public User(String email, String passwordHash) {
         this.email = email;
+        this.passwordHash = passwordHash;
     }
 
     public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+        return this.passwordHash;
     }
 }

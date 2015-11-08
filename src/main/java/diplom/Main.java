@@ -1,14 +1,16 @@
 package diplom;
 
+import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.EbeanServerFactory;
+import com.avaje.ebean.config.DataSourceConfig;
+import com.avaje.ebean.config.ServerConfig;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.ServletModule;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import diplom.api.UserApi;
+import org.avaje.agentloader.AgentLoader;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -20,18 +22,21 @@ import org.eclipse.jetty.util.resource.Resource;
 
 import javax.inject.Singleton;
 import javax.servlet.DispatcherType;
-import java.sql.SQLException;
 import java.util.EnumSet;
 
 public class Main {
+    private final static String DB_CONNECTION = "jdbc:h2:mem:db";
+    private final static String DB_DRIVER = "org.h2.Driver";
+    private final static String DB_USERNAME = "sa";
+    private final static String DB_PASSWORD = "";
+    private final static int PORT = 8000;
+
     public static void main(String... args) throws Exception {
-        final int port = 8000;
-
-        Injector injector = Guice.createInjector(new Module());
-
-        createTables(injector.getInstance(ConnectionSource.class));
-
-        startServer(port);
+        if (!AgentLoader.loadAgentFromClasspath("avaje-ebeanorm-agent","debug=1;packages=diplom.entities.**")) {
+            throw new Exception("avaje-ebeanorm-agent not found in classpath - not dynamically loaded");
+        }
+        Guice.createInjector(new Module());
+        startServer(PORT);
     }
 
     private static void startServer(int port) throws Exception {
@@ -44,6 +49,8 @@ public class Main {
 
         ServletContextHandler guiceContext = new ServletContextHandler();
         guiceContext.addFilter(GuiceFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC));
+        guiceContext.setAttribute("com.sun.jersey.api.json.POJOMappingFeature", "true");
+        guiceContext.setAttribute("com.sun.jersey.spi.container.ContainerRequestFilters", "diplom.ContentTypeFilter");
         guiceContext.setContextPath("/api/v1");
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
@@ -52,24 +59,47 @@ public class Main {
         server.start();
     }
 
-    private static void createTables(ConnectionSource conn) throws SQLException {
-        TableUtils.createTable(conn, diplom.entities.User.class);
-    }
-
     private static class Module extends ServletModule {
         @Override
         protected void configureServlets() {
-            bind(DefaultServlet.class).in(Singleton.class);
-            bind(diplom.api.User.class);
+            bind(PasswordHasher.class).to(BcryptPasswordHasher.class);
+            setupJersey();
+        }
 
-            // Jersey (REST API)
+        void setupJersey() {
+            bind(DefaultServlet.class).in(Singleton.class);
+            bind(UserApi.class);
+            bind(ContentTypeFilter.class);
             serve("/*").with(GuiceContainer.class);
         }
 
         @Provides
         @Singleton
-        ConnectionSource provideConnectionSource() throws SQLException {
-            return new JdbcConnectionSource("jdbc:h2:mem:account");
+        private EbeanServer getServer(ServerConfig c) {
+            return EbeanServerFactory.create(c);
+        }
+
+        @Provides
+        @Singleton
+        private ServerConfig getServerConfig(DataSourceConfig dsc) {
+            ServerConfig c = new ServerConfig();
+            c.setName("db");
+            c.loadFromProperties();
+            c.setDdlGenerate(true);
+            c.setDdlRun(true);
+            c.setDataSourceConfig(dsc);
+            return c;
+        }
+
+        @Provides
+        @Singleton
+        private DataSourceConfig getDataSourceConfig() {
+            DataSourceConfig c = new DataSourceConfig();
+            c.setUsername(DB_USERNAME);
+            c.setPassword(DB_PASSWORD);
+            c.setUrl(DB_CONNECTION);
+            c.setDriver(DB_DRIVER);
+            return c;
         }
     }
 }
