@@ -8,26 +8,35 @@ import * as api from './api';
 
 import 'bootstrap/less/bootstrap.less';
 
-const ErrorList = ({errors}) => {
+const ErrorList = ({ errors }) => {
     if(errors)
         return (
-            <ul>
-                { errors.map((error) => <li key={ error }>{ error }</li>) }
-            </ul>
+            <div>
+                { errors.map((error) =>
+                             <div className='alert alert-danger' role='alert' key={ error }>{ error }</div>
+                             )
+                }
+            </div>
         );
     else
         return <span />;
 };
 
-class RegisterForm extends React.Component {
+class LoginForm extends React.Component {
     render() {
         const { email, password, errors } = this.props;
         return (
             <form method='post' onSubmit={ (event) => this.submit(event) }>
                 <ErrorList errors={ errors } />
-                <input name='email' value={ email } />
-                <input name='password' value={ password } type='password' />
-                <input type='submit' />
+                <div className='form-group'>
+                    <label htmlFor='email'>Email</label>
+                    <input id='email' name='email' value={ email } className='form-control' />
+                </div>
+                <div className='form-group'>
+                    <label htmlFor='password'>Password</label>
+                    <input id='password' name='password' value={ password } type='password' className='form-control' />
+                </div>
+                <button type='submit' className='btn btn-primary' >Submit</button>
             </form>
         );
     }
@@ -52,7 +61,7 @@ function dispatcher(state = {}, action) {
         case 'token':
             state.token = action.token;
             break;
-        case 'register-errors':
+        case 'login-errors':
             state.errors = action.errors;
             break;
     }
@@ -65,21 +74,29 @@ let store = createStore(dispatcher);
 class App extends React.Component {
     render() {
         const { email, password, errors } = this.props;
-        return <RegisterForm
-            email={ email }
-            password={ password }
-            errors={ errors }
-            onSubmit={ this.register.bind(this) } />;
+        return (
+            <div className='container'>
+                <div className='row'>
+                    <div className='col-xs-12 jumbotron'>
+                        <LoginForm
+                            email={ email }
+                            password={ password }
+                            errors={ errors }
+                            onSubmit={ this.login.bind(this) } />
+                    </div>
+                </div>
+            </div>
+        );
     }
 
-    register() {
+    login() {
         const { email, password, dispatch } = this.props;
-        api.post('register', { email, password })
+        api.post('login', { email, password })
             .then((result) => dispatch({ type: 'token', token: result.token }))
             .catch((result) =>
                    {
                        let errors = result.errors || ['Unknown error'];
-                       dispatch({ type: 'register-errors', errors });
+                       dispatch({ type: 'login-errors', errors });
                    }
                   );
     }

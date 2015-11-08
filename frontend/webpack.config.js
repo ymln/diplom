@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var DEV = process.env.DEV;
 
 module.exports = {
-    entry: './javascript/app.jsx',
+    entry: './javascript/app.js',
     output: {
         path: __dirname+'/static',
         filename: 'all.js'
@@ -21,7 +21,7 @@ module.exports = {
             },
             {
                 test: /\.less/,
-                loader: "style!css!less"
+                loader: 'style!css!less'
             },
 
             // **IMPORTANT** This is needed so that each bootstrap js file required by
@@ -30,11 +30,11 @@ module.exports = {
 
             // Needed for the css-loader when bootstrap's css is loaded.
             // See https://github.com/bline/bootstrap-webpack
-            { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,   loader: "file" },
-            { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,  loader: "file" },
-            { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,    loader: "file" },
-            { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,    loader: "file" },
-            { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,    loader: "file" }
+            { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,   loader: 'file' },
+            { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,  loader: 'file' },
+            { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,    loader: 'file' },
+            { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,    loader: 'file' },
+            { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,    loader: 'file' }
         ]
     },
     plugins: DEV ? [] : [
@@ -46,5 +46,5 @@ module.exports = {
             }
         })
     ],
-    devtool: "#source-map"
+    devtool: DEV ? 'cheap-module-eval-source-map' : false
 }
