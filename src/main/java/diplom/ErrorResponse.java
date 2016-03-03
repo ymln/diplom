@@ -1,9 +1,14 @@
 package diplom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ErrorResponse {
-    private String[] errors;
+    private List<String> errors;
 
     public ErrorResponse(String error) {
-        this.errors = new String[] { error };
+        List<String> errors = new ArrayList<String>(1);
+        errors.add(error);
+        this.errors = errors;
     }
 }

@@ -1,0 +1,3 @@
+#!/bin/sh
+cd $(dirname $0)
+DEV=1 ./mvnw clean install exec:java

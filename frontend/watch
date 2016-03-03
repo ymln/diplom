@@ -1,0 +1,5 @@
+#!/bin/sh
+cd $(dirname $0)
+node=../node/node
+webpack=node_modules/webpack/bin/webpack.js
+DEV=1 $node $webpack --watch --progress

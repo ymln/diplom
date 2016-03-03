@@ -1,5 +1,7 @@
 package diplom.entities;
 
+import com.avaje.ebean.annotation.CreatedTimestamp;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -11,9 +13,9 @@ public class Token {
     private long id;
     @Column
     private UUID token;
-    @ManyToOne()
+    @ManyToOne
     private User user;
-    @Column
+    @CreatedTimestamp
     private Timestamp created;
 
     Token() {
@@ -23,5 +25,9 @@ public class Token {
         this.token = token;
         this.user = user;
         this.created = created;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

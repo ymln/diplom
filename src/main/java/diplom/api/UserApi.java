@@ -28,15 +28,20 @@ public class UserApi {
     }
 
     @POST
-    @Path("/register")
+    @Path("/signup")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Object register(@FormParam("email") String email, @FormParam("password") String password)
+    public Object signup(@FormParam("email") String email, @FormParam("password") String password)
     {
-        User user = new User(email, hasher.hash(password));
-        db.save(user);
-        UUID token = generateToken(user);
-        return new TokenResponse(token);
+        User existingUser = db.find(User.class).where().eq("email", email).findUnique();
+        if(existingUser == null) {
+            User user = new User(email, hasher.hash(password));
+            db.save(user);
+            UUID token = generateToken(user);
+            return new TokenResponse(token);
+        } else {
+            return new ErrorResponse("This user already exists");
+        }
     }
 
     @POST

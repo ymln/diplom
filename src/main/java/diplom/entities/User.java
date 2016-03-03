@@ -5,6 +5,8 @@ import com.avaje.ebean.Model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class User extends Model {
@@ -14,6 +16,8 @@ public class User extends Model {
     private String email;
     @Column
     private String passwordHash;
+    @OneToMany
+    private List<Project> projects;
 
     public User() {
     }
@@ -25,5 +29,9 @@ public class User extends Model {
 
     public String getPasswordHash() {
         return this.passwordHash;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
     }
 }

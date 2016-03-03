@@ -1,13 +1,14 @@
 import $ from 'jquery';
 
 const API_ROOT = '/api/v1';
-let token;
 
 function toPromise($promise) {
     return new Promise(function (resolve, reject) {
         $promise.then(resolve, reject);
     });
 }
+
+var token;
 
 function request(method, uri, data) {
     let url = API_ROOT+'/'+uri;
@@ -23,8 +24,17 @@ function post(uri, data) {
     return request('POST', uri, data);
 }
 
-function setToken(token_) {
-    token = token_;
-}
 
-export { get, post };
+export default class Api {
+    setToken(token_) {
+        token = token_;
+    }
+
+    login(email, password) {
+        return post('users/login', {email, password});
+    }
+
+    signup(email, password) {
+        return post('users/signup', {email, password});
+    }
+}

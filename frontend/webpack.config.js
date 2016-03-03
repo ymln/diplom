@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var DEV = process.env.DEV;
 
 module.exports = {
-    entry: './javascript/app.js',
+    entry: './javascript/index.js',
     output: {
         path: __dirname+'/static',
         filename: 'all.js'
@@ -46,5 +46,5 @@ module.exports = {
             }
         })
     ],
-    devtool: DEV ? '#cheap-module-eval-source-map' : false
+    devtool: DEV ? '#cheap-source-map' : false
 }

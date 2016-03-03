@@ -4,15 +4,14 @@
     "babel-loader": "^5.3.3",
     "babel-runtime": "^5.8.29",
     "bootstrap": "^3.3.5",
-    "clone": "^1.0.2",
     "css-loader": "^0.22.0",
     "file-loader": "^0.8.4",
+    "imports-loader": "^0.6.5",
     "jquery": "^2.1.4",
     "less": "^2.5.3",
     "less-loader": "^2.2.1",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
-    "react-redux": "^4.0.0",
     "style-loader": "^0.13.0",
     "webpack": "^1.12.3"
   }
